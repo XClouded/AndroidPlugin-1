@@ -15,6 +15,7 @@
  */
 package com.limemobile.app.plugin.internal;
 
+import android.app.Application;
 import android.content.pm.PackageInfo;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -26,15 +27,17 @@ import dalvik.system.DexClassLoader;
  * Resources and DexClassLoader.
  */
 public class PluginClientInfo {
-    private String mDefaultActivity;
+	private String mDefaultActivity;
 
-    public final String mPackageName;
-    public final String mPath;
+	public final String mPackageName;
+	public final String mPath;
 
-    public final DexClassLoader mClassLoader;
-    public final AssetManager mAssetManager;
-    public final Resources mResources;
-    public final PackageInfo mClientPackageInfo;
+	public final DexClassLoader mClassLoader;
+	public final AssetManager mAssetManager;
+	public final Resources mResources;
+	public final PackageInfo mClientPackageInfo;
+
+    protected Application mApplication;
 
     public PluginClientInfo(String packageName, String path,
             DexClassLoader loader, AssetManager assetManager,
@@ -47,13 +50,25 @@ public class PluginClientInfo {
         this.mClientPackageInfo = packageInfo;
     }
 
-    public String getDefaultActivity() {
-        if (TextUtils.isEmpty(mDefaultActivity)) {
-            if (mClientPackageInfo.activities != null
-                    && mClientPackageInfo.activities.length > 0) {
-                mDefaultActivity = mClientPackageInfo.activities[0].name;
-            }
-        }
-        return mDefaultActivity;
+    public boolean isApplicationInited() {
+        return mApplication != null;
     }
+
+    public Application getApplication() {
+        return mApplication;
+    }
+
+    public void setApplication(Application application) {
+        mApplication = application;
+    }
+
+	public String getDefaultActivity() {
+		if (TextUtils.isEmpty(mDefaultActivity)) {
+			if (mClientPackageInfo.activities != null
+					&& mClientPackageInfo.activities.length > 0) {
+				mDefaultActivity = mClientPackageInfo.activities[0].name;
+			}
+		}
+		return mDefaultActivity;
+	}
 }

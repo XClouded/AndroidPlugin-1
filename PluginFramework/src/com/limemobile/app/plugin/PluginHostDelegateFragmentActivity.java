@@ -49,12 +49,12 @@ public class PluginHostDelegateFragmentActivity extends FragmentActivity
 		implements IPluginActivityDelegate {
 
 	protected IPluginActivity mDelegatedActivity;
-	protected PluginDelegateActivityImpl mProxyImpl = new PluginDelegateActivityImpl(
+	protected PluginDelegateActivityImpl mDelegateImpl = new PluginDelegateActivityImpl(
 			this);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		mProxyImpl.onCreate(getIntent());
+		mDelegateImpl.onCreate(getIntent());
 		super.onCreate(savedInstanceState);
 	}
 
@@ -63,34 +63,50 @@ public class PluginHostDelegateFragmentActivity extends FragmentActivity
 		mDelegatedActivity = delegatedActivity;
 	}
 
-	@Override
-	public AssetManager getAssets() {
-		return mProxyImpl.getAssets() == null ? super.getAssets() : mProxyImpl
-				.getAssets();
-	}
+    public IPluginActivity getRemoteActivity() {
+        return mDelegatedActivity;
+    }
 
-	@Override
-	public Resources getResources() {
-		return mProxyImpl.getResources() == null ? super.getResources()
-				: mProxyImpl.getResources();
-	}
+    @Override
+    public AssetManager getAssets() {
+        return mDelegateImpl.getAssets() == null ? super.getAssets()
+                : mDelegateImpl.getAssets();
+    }
 
-	@Override
-	public Theme getTheme() {
-		return mProxyImpl.getTheme() == null ? super.getTheme() : mProxyImpl
-				.getTheme();
-	}
+    @Override
+    public Resources getResources() {
+        return mDelegateImpl.getResources() == null ? super.getResources()
+                : mDelegateImpl.getResources();
+    }
+
+    @Override
+    public Theme getTheme() {
+        return mDelegateImpl.getTheme() == null ? super.getTheme()
+                : mDelegateImpl.getTheme();
+    }
 
 	@Override
 	public ClassLoader getClassLoader() {
-		return mProxyImpl.getClassLoader();
+		return mDelegateImpl.getClassLoader();
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		mDelegatedActivity.onActivityResult(requestCode, resultCode, data);
-		super.onActivityResult(requestCode, resultCode, data);
-	}
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mDelegatedActivity.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        mDelegatedActivity.onPostCreate(savedInstanceState);
+        super.onPostCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onPostResume() {
+        mDelegatedActivity.onPostResume();
+        super.onPostResume();
+    }
 
 	@Override
 	protected void onStart() {
@@ -164,11 +180,13 @@ public class PluginHostDelegateFragmentActivity extends FragmentActivity
 		return mDelegatedActivity.onKeyUp(keyCode, event);
 	}
 
-	@Override
-	public void onWindowAttributesChanged(LayoutParams params) {
-		mDelegatedActivity.onWindowAttributesChanged(params);
-		super.onWindowAttributesChanged(params);
-	}
+    @Override
+    public void onWindowAttributesChanged(LayoutParams params) {
+        if (mDelegatedActivity != null) {
+            mDelegatedActivity.onWindowAttributesChanged(params);
+        }
+        super.onWindowAttributesChanged(params);
+    }
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {

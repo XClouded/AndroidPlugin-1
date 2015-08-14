@@ -19,14 +19,35 @@ import dalvik.system.DexClassLoader;
 
 public class PluginClientDexClassLoader extends DexClassLoader {
 
-    public PluginClientDexClassLoader(String dexPath,
-            String optimizedDirectory, String libraryPath, ClassLoader parent) {
-        super(dexPath, optimizedDirectory, libraryPath, parent);
-    }
+	public PluginClientDexClassLoader(String dexPath,
+			String optimizedDirectory, String libraryPath, ClassLoader parent) {
+		super(dexPath, optimizedDirectory, libraryPath, parent);
+	}
 
     @Override
     public Class<?> loadClass(String className) throws ClassNotFoundException {
-        return super.loadClass(className);
+        ClassLoader parentCl = this.getParent();
+        Class<?> clazz = null;
+        try {
+            clazz = parentCl.loadClass(className);
+            if (clazz == null) {
+                parentCl = parentCl.getParent();
+                if (parentCl != null) {
+                    clazz = parentCl.loadClass(className);
+                }
+            }
+        } catch (ClassNotFoundException e) {
+        }
+
+        if (clazz == null) {
+            clazz = findClass(className);
+        }
+        
+        if (clazz == null) {
+            return super.loadClass(className);
+        }
+
+        return clazz;
     }
 
     @Override

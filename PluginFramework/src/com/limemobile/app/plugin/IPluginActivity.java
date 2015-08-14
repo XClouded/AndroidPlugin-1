@@ -29,46 +29,50 @@ import com.limemobile.app.plugin.internal.PluginClientInfo;
 
 public interface IPluginActivity {
 
-    public void setDelegate(Activity pluginHostActivity,
-            PluginClientInfo pluginPackage);
+	public void setDelegate(Activity pluginHostActivity,
+			PluginClientInfo pluginPackage);
 
-    public void onCreate(Bundle savedInstanceState);
+	public void onCreate(Bundle savedInstanceState);
+
+    public void onPostCreate(Bundle savedInstanceState);
 
     public void onStart();
 
-    public void onRestart();
+	public void onRestart();
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data);
+	public void onActivityResult(int requestCode, int resultCode, Intent data);
 
     public void onResume();
 
-    public void onPause();
+    public void onPostResume();
 
-    public void onStop();
+	public void onPause();
 
-    public void onDestroy();
+	public void onStop();
 
-    public void onSaveInstanceState(Bundle outState);
+	public void onDestroy();
 
-    public void onNewIntent(Intent intent);
+	public void onSaveInstanceState(Bundle outState);
 
-    public void onRestoreInstanceState(Bundle savedInstanceState);
+	public void onNewIntent(Intent intent);
 
-    public boolean onTouchEvent(MotionEvent event);
+	public void onRestoreInstanceState(Bundle savedInstanceState);
 
-    public boolean onKeyUp(int keyCode, KeyEvent event);
+	public boolean onTouchEvent(MotionEvent event);
 
-    public void onWindowAttributesChanged(LayoutParams params);
+	public boolean onKeyUp(int keyCode, KeyEvent event);
 
-    public void onWindowFocusChanged(boolean hasFocus);
+	public void onWindowAttributesChanged(LayoutParams params);
 
-    public void onBackPressed();
+	public void onWindowFocusChanged(boolean hasFocus);
 
-    public boolean onCreateOptionsMenu(Menu menu);
+	public void onBackPressed();
 
-    public boolean onOptionsItemSelected(MenuItem item);
-    
-    public void unbindService(ServiceConnection conn);
+	public boolean onCreateOptionsMenu(Menu menu);
 
-    public String getPackageName();
+	public boolean onOptionsItemSelected(MenuItem item);
+
+	public void unbindService(ServiceConnection conn);
+
+	public String getPackageName();
 }
